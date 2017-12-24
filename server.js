@@ -1,15 +1,24 @@
 const express = require('express');
+const http = require('http');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const spotify = require('./spotify');
 const { puppeteerLogin, puppeteerClose } = require('./puppeteer');
 
 const app = express();
+const server = http.createServer(app);
 const router = new express.Router();
 const port = process.env.PORT || 3000;
 
 const STATE_KEY = 'spotify_auth_state';
-const scopes = ['user-read-private', 'user-read-email'];
+const scopes = [
+  'user-read-private',
+  'user-read-email',
+  'playlist-read-private',
+  'playlist-read-collaborative',
+  'playlist-modify-public',
+  'playlist-modify-private'
+];
 
 let authResolve;
 let authReject;
@@ -71,5 +80,6 @@ app.use(cookieParser())
   .use(bodyParser.urlencoded({ extended: false }))
   .use('/', router);
 
-module.exports = app;
+module.exports = server;
+module.exports.app = app;
 module.exports.authPromise = authPromise;
