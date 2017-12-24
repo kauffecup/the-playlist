@@ -28,4 +28,6 @@ authPromise.then(async () => {
   const new100singles = await spotify.getOrCreatePlaylist(id, NEW_SINGLES, playlists);
   console.log(`Found "${NEW_ALBUMS}" at ${new100albums.id}`);
   console.log(`Found "${NEW_SINGLES}" at ${new100singles.id}`);
+  // once playlists exist, begin fetching all albums that came out this week
+  const allAlbums = await spotify.getThisWeeksAlbums();
 });
