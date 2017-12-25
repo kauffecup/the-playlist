@@ -36,9 +36,14 @@ authPromise.then(async () => {
   await spotify.replacePlaylistWithAlbumTracks(id, new100albums.id, NEW_ALBUMS, albums);
   await spotify.replacePlaylistWithAlbumTracks(id, new100singles.id, NEW_SINGLES, singles);
   console.log('we did it!');
+  // once complete, log a nicely formatted grid of albums and singles
   const columns = ['name', 'artists', 'popularity', 'date'];
+  const config = {
+    name: { maxWidth: 30 },
+    artists: { maxWidth: 40 }
+  };
   console.log('\n\n\nAlbums:')
-  console.log(columnify(spotify.formatAlbums(albums), { columns }));
+  console.log(columnify(spotify.formatAlbums(albums), { columns, config }));
   console.log('\n\n\nSingles:');
-  console.log(columnify(spotify.formatAlbums(singles), { columns }));
+  console.log(columnify(spotify.formatAlbums(singles), { columns, config }));
 });

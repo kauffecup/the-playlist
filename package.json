@@ -1,13 +1,11 @@
 {
   "name": "spotify-new-100",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js"
   },
-  "author": "Jonathan Kaufman <jkaufman@squarespace.com>",
-  "license": "ISC",
+  "author": "Jonathan Kaufman <jondakauf@gmail.com>",
   "dependencies": {
     "bluebird": "^3.5.1",
     "body-parser": "^1.18.2",
