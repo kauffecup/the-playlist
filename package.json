@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "lint": "eslint ."
   },
   "author": "Jonathan Kaufman <jondakauf@gmail.com>",
   "dependencies": {
@@ -18,5 +19,12 @@
     "progress": "^2.0.0",
     "puppeteer": "^0.13.0",
     "spotify-web-api-node": "^2.5.0"
+  },
+  "devDependencies": {
+    "eslint": "^4.14.0",
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-jsx-a11y": "^6.0.3",
+    "eslint-plugin-react": "^7.5.1"
   }
 }

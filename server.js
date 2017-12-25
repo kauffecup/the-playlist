@@ -3,7 +3,6 @@ const http = require('http');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const spotify = require('./spotify');
-const { puppeteerLogin, puppeteerClose } = require('./puppeteer');
 
 const app = express();
 const server = http.createServer(app);
@@ -17,7 +16,7 @@ const scopes = [
   'playlist-read-private',
   'playlist-read-collaborative',
   'playlist-modify-public',
-  'playlist-modify-private'
+  'playlist-modify-private',
 ];
 
 let authResolve;
@@ -28,7 +27,7 @@ const authPromise = new Promise((resolve, reject) => {
 });
 
 /** Generates a random string containing numbers and letters of N characters */
-const generateRandomString = N => (Math.random().toString(36)+Array(N).join('0')).slice(2, N+2);
+const generateRandomString = N => (Math.random().toString(36) + Array(N).join('0')).slice(2, N + 2);
 
 /**
  * The /login endpoint
@@ -61,7 +60,7 @@ router.get('/callback', async (req, res) => {
   res.clearCookie(STATE_KEY);
 
   // Retrieve an access token and a refresh token
-  const { body: { expires_in, access_token, refresh_token } } =
+  const { body: { access_token, refresh_token } } =
     await spotify.authorizationCodeGrant(code);
 
   // Set the access token on the API object to use it in later calls
@@ -70,7 +69,7 @@ router.get('/callback', async (req, res) => {
 
   // close our request
   authResolve();
-  res.send();
+  return res.send();
 });
 
 // configure the express server

@@ -2,8 +2,9 @@ require('dotenv').config();
 
 const columnify = require('columnify');
 const server = require('./server');
-const { authPromise, app } = server;
 const spotify = require('./spotify');
+
+const { authPromise, app } = server;
 const { puppeteerLogin, puppeteerClose } = require('./puppeteer');
 
 const NEW_ALBUMS = 'New 100 Albums';
@@ -39,10 +40,10 @@ authPromise.then(async () => {
   // once complete, log a nicely formatted grid of albums and singles
   const columns = ['name', 'artists', 'popularity', 'date'];
   const config = {
-    name: { maxWidth: 30 },
-    artists: { maxWidth: 40 }
+    name: { maxWidth: 35 },
+    artists: { maxWidth: 50 },
   };
-  console.log('\n\n\nAlbums:')
+  console.log('\n\n\nAlbums:');
   console.log(columnify(spotify.formatAlbums(albums), { columns, config }));
   console.log('\n\n\nSingles:');
   console.log(columnify(spotify.formatAlbums(singles), { columns, config }));

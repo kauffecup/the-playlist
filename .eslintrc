@@ -1,0 +1,11 @@
+{
+  "extends": "airbnb",
+  "env": {
+    "node": true
+  },
+  "rules": {
+    "camelcase": "off",
+    "no-await-in-loop": "off",
+    "no-console": "off"
+  }
+}
