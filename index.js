@@ -1,5 +1,6 @@
 require('dotenv').config();
 
+const columnify = require('columnify');
 const server = require('./server');
 const { authPromise, app } = server;
 const spotify = require('./spotify');
@@ -29,5 +30,15 @@ authPromise.then(async () => {
   console.log(`Found "${NEW_ALBUMS}" at ${new100albums.id}`);
   console.log(`Found "${NEW_SINGLES}" at ${new100singles.id}`);
   // once playlists exist, begin fetching all albums that came out this week
-  const allAlbums = await spotify.getThisWeeksAlbums();
+  const { albums, singles } = await spotify.getThisWeeksAlbumsAndSingles();
+  console.log('Found top 100 albums and top 100 singles');
+  // once we have the albums and singles, add their tracks to our playlists
+  await spotify.replacePlaylistWithAlbumTracks(id, new100albums.id, NEW_ALBUMS, albums);
+  await spotify.replacePlaylistWithAlbumTracks(id, new100singles.id, NEW_SINGLES, singles);
+  console.log('we did it!');
+  const columns = ['name', 'artists', 'popularity', 'date'];
+  console.log('\n\n\nAlbums:')
+  console.log(columnify(spotify.formatAlbums(albums), { columns }));
+  console.log('\n\n\nSingles:');
+  console.log(columnify(spotify.formatAlbums(singles), { columns }));
 });

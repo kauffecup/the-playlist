@@ -1,7 +1,11 @@
 const SpotifyWebApi = require('spotify-web-api-node');
 const ProgressBar = require('progress');
 const Promise = require('bluebird');
-const { flatten } = require('lodash');
+const moment = require('moment');
+const { flatten, take } = require('lodash');
+
+const ALBUM_TYPE = 'album';
+const SINGLE_TYPE = 'single';
 
 const MAX_RETRIES = 5;
 const RETRY_INTERVAL = 10 * 1000;
@@ -50,7 +54,8 @@ const getAll = async (limit, label, func) => {
     }
   }
   
-  const requestParams = Array.from(new Array(Math.ceil(total / limit))).map((_, i) => ({
+  const arrayLength = Math.ceil(total / limit);
+  const requestParams = Array.from(new Array(arrayLength)).map((_, i) => ({
     limit,
     offset: i * limit
   }));
@@ -74,16 +79,57 @@ const getAllPlaylists = async (id) =>
     return { items, total };
   });
 
-const getThisWeeksAlbums = async () => {
+const getThisWeeksAlbumsAndSingles = async () => {
   const albums = await getAll(20, 'albums', async ({ limit, offset }) => {
     let { body: { albums: { items, total } } } = await spotify.searchAlbums('tag:new', { limit, offset });
     ({ body: { albums: items } } = await spotify.getAlbums(items.map(({ id }) => id)));
     return { items, total }
   });
-  console.log(albums)
+
+  const begSaturday = moment().day(-1).subtract(7, 'days').startOf('day');
+  const endFriday = moment().day(-2).endOf('day');
+  const thisWeek = albums.filter(({ release_date }) => {
+    const releaseDate = moment(release_date);
+    return begSaturday < releaseDate && releaseDate < endFriday;
+  }).sort(({ popularity: aPop }, { popularity: bPop }) => bPop - aPop);
+
+  const thisWeekAlbums = thisWeek.filter(({ album_type }) => album_type === ALBUM_TYPE);
+  const thisWeekSingles = thisWeek.filter(({ album_type }) => album_type  === SINGLE_TYPE);
+  
+  return { albums: thisWeekAlbums.slice(0, 100), singles: thisWeekSingles.slice(0, 100) };
 };
+
+const replacePlaylistWithAlbumTracks = async (id, playlistId, playlistName, albums) => {
+  const maxUris = 10;
+  let trackUris = flatten(albums.map(({ tracks }) => tracks.items.map(({ uri }) => uri)));
+
+  const total = trackUris.length;
+  let tracksAdded = 0;
+  const bar = new ProgressBar(`Adding tracks to ${playlistName} [:bar] :current/:total (:percent)`, barOpts(total));
+
+  let batch = take(trackUris, maxUris);
+  bar.tick(batch.length);
+  trackUris = trackUris.slice(maxUris);
+  await spotify.replaceTracksInPlaylist(id, playlistId, batch);
+
+  while (trackUris.length) {
+    let batch = take(trackUris, maxUris);
+    bar.tick(batch.length);
+    trackUris = trackUris.slice(maxUris);
+    await spotify.addTracksToPlaylist(id, playlistId, batch);
+  }
+};
+
+const formatAlbums = (albums) => albums.map(({ artists, name, popularity, release_date }) => ({
+  artists: artists.map(({ name }) => name).join(', '),
+  date: release_date,
+  name,
+  popularity
+}));
 
 module.exports = spotify;
 module.exports.getAllPlaylists = getAllPlaylists;
 module.exports.getOrCreatePlaylist = getOrCreatePlaylist;
-module.exports.getThisWeeksAlbums = getThisWeeksAlbums;
+module.exports.getThisWeeksAlbumsAndSingles = getThisWeeksAlbumsAndSingles;
+module.exports.replacePlaylistWithAlbumTracks = replacePlaylistWithAlbumTracks;
+module.exports.formatAlbums = formatAlbums;
