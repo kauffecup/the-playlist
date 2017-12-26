@@ -7,8 +7,8 @@ const spotify = require('./spotify');
 const { authPromise, app } = server;
 const { puppeteerLogin, puppeteerClose } = require('./puppeteer');
 
-const NEW_ALBUMS = 'New 100 Albums';
-const NEW_SINGLES = 'New 100 Singles';
+const NEW_ALBUMS = 'The Playlist';
+const NEW_SINGLES = 'The Singles Playlist';
 
 // Start her up, boys
 server.listen(app.get('port'), () => {

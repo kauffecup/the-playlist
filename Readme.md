@@ -1,8 +1,8 @@
 # The Playlist(s)
 
-[New 100 Albums](https://open.spotify.com/user/kauffecup/playlist/5qLUWpA1QY1fokpsexfyLz)
+[The Playlist](https://open.spotify.com/user/kauffecup/playlist/5qLUWpA1QY1fokpsexfyLz)
 
-[New 100 Singles](https://open.spotify.com/user/kauffecup/playlist/01frpX1uAprT3s2gPcFXeN)
+[The Singles Playlist](https://open.spotify.com/user/kauffecup/playlist/01frpX1uAprT3s2gPcFXeN)
 
 ## To Run
 
@@ -35,7 +35,7 @@ CLIENT_PASSWORD=<Your Spotify Password>
 npm run start
 ```
 
-This runs `node index.js` which:
+This runs `node src/index.js` which:
 
   1. Kicks off a server
   1. Spins up puppeteer to authenticate with Spotify's OAuth2
